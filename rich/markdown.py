@@ -126,8 +126,7 @@ class Heading(TextElement):
 
     @classmethod
     def create(cls, markdown: "Markdown", node: Any) -> "Heading":
-        heading = cls(node.level)
-        return heading
+        return cls(node.level)
 
     def on_enter(self, context: "MarkdownContext") -> None:
         self.text = Text()
@@ -176,10 +175,9 @@ class CodeBlock(TextElement):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         code = str(self.text).rstrip()
-        syntax = Syntax(
+        yield Syntax(
             code, self.lexer_name, theme=self.theme, word_wrap=True, padding=0
         )
-        yield syntax
 
 
 class BlockQuote(TextElement):
@@ -293,7 +291,7 @@ class ListItem(TextElement):
 
         new_line = Segment("\n")
         padding = Segment(" " * number_width, number_style)
-        numeral = Segment(f"{number}".rjust(number_width - 1) + " ", number_style)
+        numeral = Segment(f'{f"{number}".rjust(number_width - 1)} ', number_style)
         for first, line in loop_first(lines):
             yield numeral if first else padding
             yield from line
@@ -383,8 +381,7 @@ class MarkdownContext:
 
     def leave_style(self) -> Style:
         """Leave a style context."""
-        style = self.style_stack.pop()
-        return style
+        return self.style_stack.pop()
 
 
 class Markdown(JupyterMixin):
@@ -502,9 +499,7 @@ class Markdown(JupyterMixin):
                                 if new_line:
                                     yield Segment("\n")
                                 yield from console.render(element, context.options)
-                                element.on_leave(context)
-                            else:
-                                element.on_leave(context)
+                            element.on_leave(context)
                         else:
                             element.on_leave(context)
                             yield from console.render(element, context.options)
@@ -521,9 +516,7 @@ class Markdown(JupyterMixin):
                         if new_line:
                             yield Segment("\n")
                         yield from console.render(element, context.options)
-                        element.on_leave(context)
-                    else:
-                        element.on_leave(context)
+                    element.on_leave(context)
                     new_line = element.new_line
 
 

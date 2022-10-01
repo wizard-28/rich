@@ -70,8 +70,7 @@ class Inspect(JupyterMixin):
             if (isclass(obj) or callable(obj) or ismodule(obj))
             else str(type(obj))
         )
-        title_text = self.highlighter(title_str)
-        return title_text
+        return self.highlighter(title_str)
 
     def __rich__(self) -> Panel:
         return Panel.fit(
@@ -84,7 +83,7 @@ class Inspect(JupyterMixin):
     def _get_signature(self, name: str, obj: Any) -> Optional[Text]:
         """Get a signature for a callable."""
         try:
-            _signature = str(signature(obj)) + ":"
+            _signature = f"{str(signature(obj))}:"
         except ValueError:
             _signature = "(...)"
         except TypeError:
@@ -112,13 +111,11 @@ class Inspect(JupyterMixin):
         else:
             prefix = "def"
 
-        qual_signature = Text.assemble(
+        return Text.assemble(
             (f"{prefix} ", f"inspect.{prefix.replace(' ', '_')}"),
             (qualname, "inspect.callable"),
             signature_text,
         )
-
-        return qual_signature
 
     def _render(self) -> Iterable[RenderableType]:
         """Render object."""
@@ -165,7 +162,12 @@ class Inspect(JupyterMixin):
                 yield doc_text
                 yield ""
 
-        if self.value and not (isclass(obj) or callable(obj) or ismodule(obj)):
+        if (
+            self.value
+            and not isclass(obj)
+            and not callable(obj)
+            and not ismodule(obj)
+        ):
             yield Panel(
                 Pretty(obj, indent_guides=True, max_length=10, max_string=60),
                 border_style="inspect.value.border",
@@ -264,7 +266,7 @@ def is_object_one_of_types(
     Returns `True` if the given object's class (or the object itself, if it's a class) has one of the
     fully qualified names in its MRO.
     """
-    for type_name in get_object_types_mro_as_strings(obj):
-        if type_name in fully_qualified_types_names:
-            return True
-    return False
+    return any(
+        type_name in fully_qualified_types_names
+        for type_name in get_object_types_mro_as_strings(obj)
+    )
