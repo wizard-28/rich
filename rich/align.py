@@ -227,8 +227,7 @@ class Align(JupyterMixin):
     def __rich_measure__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> Measurement:
-        measurement = Measurement.get(console, options, self.renderable)
-        return measurement
+        return Measurement.get(console, options, self.renderable)
 
 
 class VerticalCenter(JupyterMixin):
@@ -283,8 +282,7 @@ class VerticalCenter(JupyterMixin):
     def __rich_measure__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> Measurement:
-        measurement = Measurement.get(console, options, self.renderable)
-        return measurement
+        return Measurement.get(console, options, self.renderable)
 
 
 if __name__ == "__main__":  # pragma: no cover

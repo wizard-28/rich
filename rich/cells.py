@@ -22,8 +22,7 @@ def cached_cell_len(text: str) -> int:
         int: Get the number of cells required to display text.
     """
     _get_size = get_character_cell_size
-    total_size = sum(_get_size(character) for character in text)
-    return total_size
+    return sum(_get_size(character) for character in text)
 
 
 def cell_len(text: str, _cell_len: Callable[[str], int] = cached_cell_len) -> int:
@@ -38,8 +37,7 @@ def cell_len(text: str, _cell_len: Callable[[str], int] = cached_cell_len) -> in
     if len(text) < 512:
         return _cell_len(text)
     _get_size = get_character_cell_size
-    total_size = sum(_get_size(character) for character in text)
-    return total_size
+    return sum(_get_size(character) for character in text)
 
 
 @lru_cache(maxsize=4096)
@@ -89,10 +87,7 @@ def set_cell_size(text: str, total: int) -> str:
 
     if _is_single_cell_widths(text):
         size = len(text)
-        if size < total:
-            return text + " " * (total - size)
-        return text[:total]
-
+        return text + " " * (total - size) if size < total else text[:total]
     if total <= 0:
         return ""
     cell_size = cell_len(text)
@@ -110,7 +105,7 @@ def set_cell_size(text: str, total: int) -> str:
         before = text[: pos + 1]
         before_len = cell_len(before)
         if before_len == total + 1 and cell_len(before[-1]) == 2:
-            return before[:-1] + " "
+            return f"{before[:-1]} "
         if before_len == total:
             return before
         if before_len > total:

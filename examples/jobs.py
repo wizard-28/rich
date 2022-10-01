@@ -22,7 +22,7 @@ with progress:
         sleep(0.2)
         progress.reset(jobs_task, total=job, description=f"job [bold yellow]#{job_no}")
         progress.start_task(jobs_task)
-        for wait in progress.track(range(job), task_id=jobs_task):
+        for _ in progress.track(range(job), task_id=jobs_task):
             sleep(0.01)
         progress.advance(master_task, job)
         progress.log(f"Job #{job_no} is complete")

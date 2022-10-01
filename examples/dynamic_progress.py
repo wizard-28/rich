@@ -96,7 +96,7 @@ with Live(progress_group):
         overall_progress.update(overall_task_id, description=top_descr)
 
         # add progress bar for steps of this app, and run the steps
-        current_task_id = current_app_progress.add_task("Installing app %s" % name)
+        current_task_id = current_app_progress.add_task(f"Installing app {name}")
         app_steps_task_id = app_steps_progress.add_task(
             "", total=len(step_times), name=name
         )
@@ -106,13 +106,15 @@ with Live(progress_group):
         app_steps_progress.update(app_steps_task_id, visible=False)
         current_app_progress.stop_task(current_task_id)
         current_app_progress.update(
-            current_task_id, description="[bold green]App %s installed!" % name
+            current_task_id, description=f"[bold green]App {name} installed!"
         )
+
 
         # increase overall progress now this task is done
         overall_progress.update(overall_task_id, advance=1)
 
     # final update for message on overall progress bar
     overall_progress.update(
-        overall_task_id, description="[bold green]%s apps installed, done!" % len(apps)
+        overall_task_id,
+        description=f"[bold green]{len(apps)} apps installed, done!",
     )
